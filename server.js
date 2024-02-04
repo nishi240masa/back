@@ -3,7 +3,7 @@ const { Client } = require('pg');
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = 3004; // 適切なポートに変更
+const port = process.env.PORT || 3004;
 
 const cors = require('cors');
 app.use(cors());
