@@ -3,17 +3,40 @@ const { Client } = require('pg');
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = 3001; // 適切なポートに変更
+const port = 3004; // 適切なポートに変更
+
+const cors = require('cors');
+app.use(cors());
 
 // PostgreSQLデータベースの接続情報
 const client = new Client({
-  user: 'your_postgres_user',
-  host: 'localhost',
-  database: 'your_database_name',
-  password: 'your_password',
-  port: 5432, // ポート番号は適宜変更
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST || process.env.DB_,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 });
+
 client.connect();
+
+client.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('Error connecting to PostgreSQL:', err);
+  } else {
+    console.log('Connected to PostgreSQL:', res.rows[0]);
+  }
+});
+
+client.query(
+  'CCREATE TABLE income (id SERIAL PRIMARY KEY,date DATE,amount DECIMAL(10, 2))',
+  (err, res) => {
+    if (err) {
+      console.error('Error creating table:', err);
+    } else {
+      console.log('Created table:', res);
+    }
+  }
+);
 
 // Body parser middleware
 app.use(bodyParser.json());
